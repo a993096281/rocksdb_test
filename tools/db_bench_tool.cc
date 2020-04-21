@@ -1836,7 +1836,7 @@ class Stats {
 
     fprintf(stdout, "%-12s : %11.3f micros/op %ld ops/sec;%s%s %.2f s\n",
             name.ToString().c_str(),
-            seconds_ * 1e6 / done_,
+            elapsed / done_,
             (long)throughput,
             (extra.empty() ? "" : " "),
             extra.c_str(), elapsed);
@@ -3860,7 +3860,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 
   void DoWrite(ThreadState* thread, WriteMode write_mode) {
     const int test_duration = write_mode == RANDOM ? FLAGS_duration : 0;
-    const int64_t num_ops = writes_ == 0 ? num_ : writes_;
+    const int64_t num_ops = writes_ == 0 ? num_ / FLAGS_threads : writes_ / FLAGS_threads;
 
     size_t num_key_gens = 1;
     if (db_.db == nullptr) {
@@ -4497,7 +4497,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
     Slice key = AllocateKey(&key_guard);
     PinnableSlice pinnable_val;
 
-    Duration duration(FLAGS_duration, reads_);
+    Duration duration(FLAGS_duration, reads_ / FLAGS_threads);
     while (!duration.Done(1)) {
       DBWithColumnFamilies* db_with_cfh = SelectDBWithCfh(thread);
       // We use same key_rand as seed for key and column family so that we can
@@ -4888,8 +4888,9 @@ void VerifyDBFromDB(std::string& truth_db_name) {
     std::unique_ptr<const char[]> lower_bound_key_guard;
     Slice lower_bound = AllocateKey(&lower_bound_key_guard);
 
-    Duration duration(FLAGS_duration, reads_);
+    Duration duration(FLAGS_duration, reads_ / FLAGS_threads);
     char value_buffer[256];
+    char key_buffer[256];
     while (!duration.Done(1)) {
       int64_t seek_pos = thread->rand.Next() % FLAGS_num;
       GenerateKeyFromInt((uint64_t)seek_pos, FLAGS_num, &key);
@@ -4936,6 +4937,9 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 
       for (int j = 0; j < FLAGS_seek_nexts && iter_to_use->Valid(); ++j) {
         // Copy out iterator's value to make sure we read them.
+        Slice cur_key = iter_to_use->key();
+        memcpy(key_buffer, cur_key.data(),
+               std::min(cur_key.size(), sizeof(key_buffer)));
         Slice value = iter_to_use->value();
         memcpy(value_buffer, value.data(),
                std::min(value.size(), sizeof(value_buffer)));

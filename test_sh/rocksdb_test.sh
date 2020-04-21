@@ -6,7 +6,7 @@ key_size="16"
 value_size="16"
 compression_type="none" #"snappy,none"
 
-benchmarks="fillrandom,stats,readrandom,stats" 
+benchmarks="fillrandom,stats,readrandom,stats,seekrandom,stats" 
 
 num="100000000"
 #num="100000000"
@@ -19,6 +19,8 @@ write_buffer_size="`expr 16 \* 1024 \* 1024`"
 max_write_buffer_number="2"
 
 target_file_size_base="`expr 4 \* 1024 \* 1024`"
+
+seek_nexts="100"
 
 #perf_level="1"
 
@@ -102,6 +104,10 @@ function FILL_PATAMS() {
 
     if [ -n "$target_file_size_base" ];then
         const_params=$const_params"--target_file_size_base=$target_file_size_base "
+    fi
+
+    if [ -n "$seek_nexts" ];then
+        const_params=$const_params"--seek_nexts=$seek_nexts "
     fi
 
 }
