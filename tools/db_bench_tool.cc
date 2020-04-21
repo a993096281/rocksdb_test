@@ -1836,7 +1836,7 @@ class Stats {
 
     fprintf(stdout, "%-12s : %11.3f micros/op %ld ops/sec;%s%s %.2f s\n",
             name.ToString().c_str(),
-            elapsed / done_,
+            elapsed * 1e6 / done_,
             (long)throughput,
             (extra.empty() ? "" : " "),
             extra.c_str(), elapsed);
