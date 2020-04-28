@@ -4995,7 +4995,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
 
   void DoDelete(ThreadState* thread, bool seq) {
     WriteBatch batch;
-    Duration duration(seq ? 0 : FLAGS_duration, deletes_);
+    Duration duration(seq ? 0 : FLAGS_duration, deletes_ / FLAGS_threads);
     int64_t i = 0;
     std::unique_ptr<const char[]> key_guard;
     Slice key = AllocateKey(&key_guard);
@@ -5369,7 +5369,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
     std::string value;
     int64_t found = 0;
     int64_t bytes = 0;
-    Duration duration(FLAGS_duration, readwrites_);
+    Duration duration(FLAGS_duration, readwrites_ / FLAGS_threads);
 
     std::unique_ptr<const char[]> key_guard;
     Slice key = AllocateKey(&key_guard);
@@ -5378,15 +5378,15 @@ void VerifyDBFromDB(std::string& truth_db_name) {
       DB* db = SelectDB(thread);
       GenerateKeyFromInt(thread->rand.Next() % FLAGS_num, FLAGS_num, &key);
 
-      auto status = db->Get(options, key, &value);
-      if (status.ok()) {
-        ++found;
-        bytes += key.size() + value.size();
-      } else if (!status.IsNotFound()) {
-        fprintf(stderr, "Get returned an error: %s\n",
-                status.ToString().c_str());
-        abort();
-      }
+      // auto status = db->Get(options, key, &value);
+      // if (status.ok()) {
+      //   ++found;
+      //   bytes += key.size() + value.size();
+      // } else if (!status.IsNotFound()) {
+      //   fprintf(stderr, "Get returned an error: %s\n",
+      //           status.ToString().c_str());
+      //   abort();
+      // }
 
       if (thread->shared->write_rate_limiter) {
         thread->shared->write_rate_limiter->Request(
@@ -5404,7 +5404,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
     }
     char msg[100];
     snprintf(msg, sizeof(msg),
-             "( updates:%" PRIu64 " found:%" PRIu64 ")", readwrites_, found);
+             "( updates:%" PRIu64 " found:%" PRIu64 ")", readwrites_ / FLAGS_threads, found);
     thread->stats.AddBytes(bytes);
     thread->stats.AddMessage(msg);
   }

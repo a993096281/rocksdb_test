@@ -17,7 +17,7 @@ deletes="10000000"
 max_background_jobs="2"
 max_bytes_for_level_base="`expr 32 \* 1024 \* 1024`" 
 
-write_buffer_size="`expr 16 \* 1024 \* 1024`"
+write_buffer_size="`expr 32 \* 1024 \* 1024`"
 max_write_buffer_number="2"
 
 target_file_size_base="`expr 4 \* 1024 \* 1024`"
