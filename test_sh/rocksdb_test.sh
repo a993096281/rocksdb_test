@@ -14,6 +14,11 @@ num="100000000"
 reads="10000000"
 deletes="10000000"
 
+use_direct_reads="true"
+use_direct_io_for_flush_and_compaction="true"
+
+cache_size="`expr $num \* \( $key_size + $value_size \) \* 1 / 10 / 512`"   #10% block cache
+
 max_background_jobs="2"
 max_bytes_for_level_base="`expr 32 \* 1024 \* 1024`" 
 
@@ -114,6 +119,18 @@ function FILL_PATAMS() {
 
     if [ -n "$seek_nexts" ];then
         const_params=$const_params"--seek_nexts=$seek_nexts "
+    fi
+
+    if [ -n "$use_direct_reads" ];then
+        const_params=$const_params"--use_direct_reads=$use_direct_reads "
+    fi
+
+    if [ -n "$use_direct_io_for_flush_and_compaction" ];then
+        const_params=$const_params"--use_direct_io_for_flush_and_compaction=$use_direct_io_for_flush_and_compaction "
+    fi
+
+    if [ -n "$cache_size" ];then
+        const_params=$const_params"--cache_size=$cache_size "
     fi
 
 }
