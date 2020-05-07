@@ -17,7 +17,7 @@ deletes="10000000"
 use_direct_reads="true"
 use_direct_io_for_flush_and_compaction="true"
 
-cache_size="`expr $num \* \( $key_size + $value_size \) \* 1 / 10 / 512`"   #10% block cache
+cache_size="`expr $num \* \( $key_size + $value_size \) \* 1 / 10 `"   #10% block cache
 
 max_background_jobs="2"
 max_bytes_for_level_base="`expr 32 \* 1024 \* 1024`" 
