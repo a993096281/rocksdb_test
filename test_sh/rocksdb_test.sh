@@ -1,7 +1,7 @@
 #! /bin/sh
 
 db="/home/lzw/ceshi"
-#db="/media/psf/lzw/ceshi"
+#db="/home/share/ceshi"
 key_size="16"
 value_size="16"
 compression_type="none" #"snappy,none"
@@ -9,13 +9,17 @@ compression_type="none" #"snappy,none"
 #benchmarks="fillrandom,stats,readrandom,stats,seekrandom,stats" 
 benchmarks="fillrandom,stats,readrandom,stats,seekrandom,stats,updaterandom,stats,deleterandom,stats"
 
+
+#num="400000"
 num="100000000"
-#num="100000000"
 reads="10000000"
 deletes="10000000"
 
+batch_size="100"
+
 use_direct_reads="true"
 use_direct_io_for_flush_and_compaction="true"
+sync="true"
 
 cache_size="`expr $num \* \( $key_size + $value_size \) \* 1 / 10 `"   #10% block cache
 
@@ -27,15 +31,17 @@ max_write_buffer_number="2"
 
 target_file_size_base="`expr 4 \* 1024 \* 1024`"
 
-seek_nexts="100"
+seek_nexts="20"
 
-#perf_level="1"
+#perf_level="5"
 
 threads="4"
 
 level0_file_num_compaction_trigger="4"   #
 level0_slowdown_writes_trigger="8"       #
 level0_stop_writes_trigger="12"          #
+
+statistics="true"
 
 
 const_params=""
@@ -131,6 +137,18 @@ function FILL_PATAMS() {
 
     if [ -n "$cache_size" ];then
         const_params=$const_params"--cache_size=$cache_size "
+    fi
+
+    if [ -n "$statistics" ];then
+        const_params=$const_params"--statistics=$statistics "
+    fi
+
+    if [ -n "$batch_size" ];then
+        const_params=$const_params"--batch_size=$batch_size "
+    fi
+
+    if [ -n "$sync" ];then
+        const_params=$const_params"--sync=$sync "
     fi
 
 }

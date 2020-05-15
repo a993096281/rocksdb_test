@@ -6018,6 +6018,9 @@ void VerifyDBFromDB(std::string& truth_db_name) {
       stats = "(failed)";
     }
     fprintf(stdout, "\n%s\n", stats.c_str());
+    if (FLAGS_statistics) {
+      fprintf(stdout, "STATISTICS:\n%s\n", dbstats->ToString().c_str());
+    }
   }
 
   void Replay(ThreadState* thread) {
