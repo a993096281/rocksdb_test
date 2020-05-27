@@ -5371,6 +5371,11 @@ void VerifyDBFromDB(std::string& truth_db_name) {
     int64_t bytes = 0;
     Duration duration(FLAGS_duration, readwrites_ / FLAGS_threads);
 
+    WriteOptions write_options = WriteOptions();
+    if (FLAGS_sync) {
+        write_options.sync = true;
+    }
+
     std::unique_ptr<const char[]> key_guard;
     Slice key = AllocateKey(&key_guard);
     // the number of iterations is the larger of read_ or write_
@@ -5394,7 +5399,7 @@ void VerifyDBFromDB(std::string& truth_db_name) {
             RateLimiter::OpType::kWrite);
       }
 
-      Status s = db->Put(write_options_, key, gen.Generate(value_size_));
+      Status s = db->Put(write_options, key, gen.Generate(value_size_));
       if (!s.ok()) {
         fprintf(stderr, "put error: %s\n", s.ToString().c_str());
         exit(1);
