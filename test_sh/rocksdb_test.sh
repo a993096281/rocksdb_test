@@ -35,6 +35,8 @@ seek_nexts="20"
 
 #perf_level="5"
 
+bloom_bits="10"
+
 threads="4"
 
 level0_file_num_compaction_trigger="4"   #
@@ -149,6 +151,10 @@ function FILL_PATAMS() {
 
     if [ -n "$sync" ];then
         const_params=$const_params"--sync=$sync "
+    fi
+
+    if [ -n "$bloom_bits" ];then
+        const_params=$const_params"--bloom_bits=$bloom_bits "
     fi
 
 }
