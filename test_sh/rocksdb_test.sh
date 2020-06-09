@@ -6,7 +6,7 @@ key_size="16"
 value_size="16"
 compression_type="none" #"snappy,none"
 
-#benchmarks="fillrandom,stats,readrandom,stats,seekrandom,stats" 
+#benchmarks="fillrandom,stats,readrandom,stats" 
 benchmarks="fillrandom,stats,readrandom,stats,seekrandom,stats,updaterandom,stats,deleterandom,stats"
 
 
@@ -15,7 +15,7 @@ num="100000000"
 reads="10000000"
 deletes="10000000"
 
-batch_size="100"
+batch_size="1"
 
 use_direct_reads="true"
 use_direct_io_for_flush_and_compaction="true"
@@ -35,7 +35,7 @@ seek_nexts="20"
 
 #perf_level="5"
 
-bloom_bits="10"
+#bloom_bits="10"
 
 threads="4"
 
@@ -45,6 +45,7 @@ level0_stop_writes_trigger="12"          #
 
 statistics="true"
 
+histogram="true"
 
 const_params=""
 
