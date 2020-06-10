@@ -37,7 +37,7 @@ seek_nexts="20"
 
 #bloom_bits="10"
 
-threads="4"
+threads="8"
 
 level0_file_num_compaction_trigger="4"   #
 level0_slowdown_writes_trigger="8"       #
